@@ -5,84 +5,117 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Baekjoon_1780 {
-	static int A = 0;
-	static int B = 0;
-	static int C = 0;
+	private static int minus = 0;
+	private static int zero = 0;
+	private static int one = 0;
+	
 	public static void main(String[] args){
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         try{
         	int N = Integer.parseInt(reader.readLine());
         	int[][] paper = readData(reader, N);
-        	cut(paper, N);
-        	System.out.println(A);
-        	System.out.println(B);
-        	System.out.println(C);
+        	cut(paper);
+        	System.out.println(minus);
+        	System.out.println(zero);
+        	System.out.println(one);
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
 	private static int[][] readData(BufferedReader reader, int N) throws IOException {
-		int[][] paper = new int[N][N];
+		int[][] movie = new int[N][N];
 		for(int i = 0; i < N; i++) {
 			String[] readStr = reader.readLine().split(" ");
 			for(int j = 0; j < N; j++) {
-				paper[i][j] = Integer.parseInt(readStr[j]);
+				movie[i][j] = Integer.parseInt(readStr[j]);
 			}
 		}
-		return paper;
+		return movie;
 	}
 	
-	private static void cut(int[][] num, int pageCnt){
-		if(checkNum(num)) {
+	private static void cut(int[][] num){
+		if(checkPaper(num)) {
 			return;
 		}else {
-			int[][] tmp = new int[pageCnt / 3][pageCnt / 3];
-			int idx = 1;
-			int x = 0;
-			int y = 0;
-			while(idx <= 9) {
-				for (int i = x; i < x + (pageCnt / 3); i++) {
-					for (int j = y; j < y + (pageCnt / 3); j++) {
-						tmp[i - x][j - y] = num[i][j];
-					}
+			for (int i = 0; i < 3; i++) {
+				int xS = i * num.length / 3;
+				int xE = (i + 1) * num.length / 3;
+				
+				for (int j = 0; j < 3; j++) {
+					int yS = j * num.length / 3;
+					int yE = (j + 1) * num.length / 3;
+					
+					cut(cutPaper(num, xS, xE, yS, yE));
 				}
-				cut(tmp, pageCnt / 3);
-				if(idx % 3 == 0) {
-					x += pageCnt / 3;
-					y = 0;
-				}else {
-					y += pageCnt / 3;
-				}
-				idx++;
 			}
 		}
 	}
 
-	private static boolean checkNum(int[][] num) {
-		int tmp = 0;
-		if(num.length > 0) {
-			for (int i = 0; i < num.length; i++) {
-				for (int j = 0; j < num.length - 1; j++) {
-					tmp = num[i][j];
-					if(tmp != num[i][j+1]) {
-						return false;
-					}
-				}
+	private static int[][] cutPaper(int[][] num, int xS, int xE, int yS, int yE) {
+		int i = 0;
+		int j = 0;
+		int[][] tmp = new int[num.length/3][num.length/3];
+		for(int x = xS; x < xE; x++) {
+			for (int y = yS; y < yE; y++) {
+				tmp[i][j++] = num[x][y];
 			}
+			i++;
+			j = 0;
 		}
-		addCnt(num[0][0]);
-		return true;
+		return tmp;
+	}
+	
+	private static boolean checkPaper(int[][] num) {
+		int[] numCnt = new int[3];
+		for(int i = 0; i < num.length; i++) {
+    		for (int j = 0; j < num.length; j++) {
+    			if(num[i][j] == -1) {
+    				numCnt[0] += 1;
+    			}else if(num[i][j] == 0) {
+    				numCnt[1] += 1;
+    			}else {
+    				numCnt[2] += 1;
+    			}
+			}
+    	}
+		if(isNotSameNumber(numCnt)) {
+			return false;
+		}else {
+			countNumbers(numCnt);
+			return true;
+		}
 	}
 
-	private static void addCnt(int num) {
-		if(num == -1) {
-			A++;
-		}else if(num == 0) {
-			B++;
-		}else if(num == 1) {
-			C++;
+	private static boolean isNotSameNumber(int[] numCnt) {
+		if(!isMinus(numCnt) && !isZero(numCnt) && !isOne(numCnt)) {
+			return true;
 		}
+		return false;
+	}
+
+	private static void countNumbers(int[] numCnt) {
+		if(isMinus(numCnt)) {
+			minus += 1;
+		}
+		if(isZero(numCnt)) {
+			zero += 1;
+		}
+		if(isOne(numCnt)) {
+			one += 1;
+		}
+	}
+
+	private static boolean isOne(int[] numCnt) {
+		return numCnt[0] == 0 && numCnt[1] == 0 && numCnt[2] > 0;
+	}
+
+	private static boolean isZero(int[] numCnt) {
+		return numCnt[0] == 0 && numCnt[1] > 0 && numCnt[2] == 0;
+	}
+
+	private static boolean isMinus(int[] numCnt) {
+		return numCnt[0] > 0 && numCnt[1] == 0 && numCnt[2] == 0;
 	}
 }
 

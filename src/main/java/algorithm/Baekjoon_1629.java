@@ -4,25 +4,31 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class Baekjoon_1629 {
-	static long num = 1L;
+	private static long num = 1L;
+	
 	public static void main(String[] args){
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         try{
         	String[] input = reader.readLine().split(" ");
-        	int A = Integer.parseInt(input[0]);
-        	int B = Integer.parseInt(input[1]);
-        	int C = Integer.parseInt(input[2]);
-        	multiplication(A, B);
+        	long A = new Long(input[0]);
+        	long B = new Long(input[1]);
+        	long C = new Long(input[2]);
+        	
+        	multiplication(A, B, C);
+        	
         	System.out.println(num % C);
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 	
-	private static void multiplication(int a, int cnt) {
-		if(cnt == 0) return;
-		num = num * a;
-		multiplication(a, --cnt);
+	private static long multiplication(long a, long b, long c) {
+		if(b == 0) return a / c;
+		if(b % 2 == 0 ) {
+			
+		}else {
+			
+		}
 	}
 }
 
